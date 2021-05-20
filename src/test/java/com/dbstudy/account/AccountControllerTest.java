@@ -67,6 +67,7 @@ class AccountControllerTest {
         Account account = accountRepository.findByEmail("dongbin@email.com");
         assertNotNull(account);
         assertNotEquals(account.getPassword(), "12345678");
+        assertNotNull(account.getEmailCheckToken());
 
         assertTrue(accountRepository.existsByEmail("dongbin@email.com"));
         assertTrue(accountRepository.existsByNickname("dongbin"));
