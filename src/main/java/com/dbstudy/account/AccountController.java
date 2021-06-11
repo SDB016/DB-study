@@ -8,6 +8,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.swing.text.View;
@@ -80,6 +81,18 @@ public class AccountController {
 
         accountService.sendSignUpConfirmEmail(account);
         return "redirect:/";
+    }
+
+    @GetMapping("/profile/{nickname}")
+    public String viewProfile(@PathVariable String nickname, Model model, @CurrentUser Account account) {
+        Account byNickname = accountRepository.findByNickname(nickname);
+        if(byNickname==null){
+            throw new IllegalArgumentException(nickname+"에 해당하는 유저가 없습니다.");
+        }
+        model.addAttribute(byNickname); //"account"라는 이름 자동으로 들어감 (타입에 해당하는 camel case)
+        model.addAttribute("isOwner", byNickname.equals(account));
+        return "account/profile";
+
     }
 
 }
