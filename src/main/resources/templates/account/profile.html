@@ -70,7 +70,7 @@
                             <span th:if="${isOwner && !account.emailVerified}" class="col-9">
                                 <a href="#" th:href="@{'/checkemail?email=' + ${account.email}}">가입을 완료하려면 이메일을 확인하세요.</a>
                             </span>
-                            <span th:text="${#temporals.format(account.joinedAt, 'yyyy년 M월 가입')}" class="col-9"></span>
+                            <span th:text="${#temporals.format(account.joinedAt, 'yyyy년 M월 d일 가입')}" class="col-9"></span>
                         </p>
                         <div th:if="${isOwner}">
                             <a class="btn btn-outline-primary" href="#" th:href="@{/settings/profile}">프로필 수정</a>
