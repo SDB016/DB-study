@@ -2,8 +2,10 @@ package com.dbstudy.settings;
 
 import com.dbstudy.domain.Account;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class Profile {
 
     private String bio;
