@@ -1,4 +1,4 @@
-package com.dbstudy.settings;
+package com.dbstudy.settings.form;
 
 import com.dbstudy.domain.Account;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package com.dbstudy.settings;
+package com.dbstudy.settings.form;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;

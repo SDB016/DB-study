@@ -1,5 +1,6 @@
-package com.dbstudy.settings;
+package com.dbstudy.settings.validator;
 
+import com.dbstudy.settings.form.PasswordForm;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
