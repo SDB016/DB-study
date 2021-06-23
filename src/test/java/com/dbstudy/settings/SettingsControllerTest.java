@@ -37,7 +37,7 @@ class SettingsControllerTest {
     void updateProfileForm() throws Exception {
 
         String bio = "짧은 소개를 수정하는 경우";
-        mockMvc.perform(get(SettingsController.SETTINGS_PROFILE_VIEW_URL))
+        mockMvc.perform(get(SettingsController.SETTINGS_PROFILE_URL))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("account"))
                 .andExpect(model().attributeExists("profile"));
@@ -49,11 +49,11 @@ class SettingsControllerTest {
     void updateProfile() throws Exception {
 
         String bio = "짧은 소개를 수정하는 경우";
-        mockMvc.perform(post(SettingsController.SETTINGS_PROFILE_VIEW_URL)
+        mockMvc.perform(post(SettingsController.SETTINGS_PROFILE_URL)
                 .param("bio", bio)
                 .with(csrf()))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(SettingsController.SETTINGS_PROFILE_VIEW_URL))
+                .andExpect(redirectedUrl(SettingsController.SETTINGS_PROFILE_URL))
                 .andExpect(flash().attributeExists("message"));
 
         Account dongbin = accountRepository.findByNickname("dongbin");
@@ -67,7 +67,7 @@ class SettingsControllerTest {
     void updateProfile_error() throws Exception {
 
         String bio = "길게 소개를 수정하는 경우 길게 소개를 수정하는 경우 길게 소개를 수정하는 경우 길게 소개를 수정하는 경우 길게 소개를 수정하는 경우";
-        mockMvc.perform(post(SettingsController.SETTINGS_PROFILE_VIEW_URL)
+        mockMvc.perform(post(SettingsController.SETTINGS_PROFILE_URL)
                 .param("bio", bio)
                 .with(csrf()))
                 .andExpect(status().isOk())
@@ -85,7 +85,7 @@ class SettingsControllerTest {
     @DisplayName("패스워드 수정 폼")
     @Test
     void updatePassword_form() throws Exception{
-        mockMvc.perform(get(SettingsController.SETTINGS_PASSWORD_VIEW_URL))
+        mockMvc.perform(get(SettingsController.SETTINGS_PASSWORD_URL))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("account"))
                 .andExpect(model().attributeExists("passwordForm"));
@@ -97,12 +97,12 @@ class SettingsControllerTest {
     void updatePassword_success() throws Exception{
 
         String newPassword = "13131313";
-        mockMvc.perform(post(SettingsController.SETTINGS_PASSWORD_VIEW_URL)
+        mockMvc.perform(post(SettingsController.SETTINGS_PASSWORD_URL)
                 .param("newPassword", newPassword)
                 .param("newPasswordConfirm",newPassword)
                 .with(csrf()))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(SettingsController.SETTINGS_PASSWORD_VIEW_URL))
+                .andExpect(redirectedUrl(SettingsController.SETTINGS_PASSWORD_URL))
                 .andExpect(flash().attributeExists("message"));
 
         Account byNickname = accountRepository.findByNickname("dongbin");
@@ -115,7 +115,7 @@ class SettingsControllerTest {
     void updatePassword_fail() throws Exception{
 
         String newPassword = "13131313";
-        mockMvc.perform(post(SettingsController.SETTINGS_PASSWORD_VIEW_URL)
+        mockMvc.perform(post(SettingsController.SETTINGS_PASSWORD_URL)
                 .param("newPassword", newPassword)
                 .param("newPasswordConfirm",newPassword + "1111")
                 .with(csrf()))

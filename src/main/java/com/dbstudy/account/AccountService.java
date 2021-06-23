@@ -1,6 +1,7 @@
 package com.dbstudy.account;
 
 import com.dbstudy.domain.Account;
+import com.dbstudy.settings.Notifications;
 import com.dbstudy.settings.PasswordForm;
 import com.dbstudy.settings.Profile;
 import lombok.RequiredArgsConstructor;
@@ -99,6 +100,16 @@ public class AccountService implements UserDetailsService {
 
     public void updatePassword(Account account, String newPassword) {
         account.setPassword(passwordEncoder.encode(newPassword));
+        accountRepository.save(account);
+    }
+
+    public void updateNotifications(Account account, Notifications notifications) {
+        account.setStudyCreatedByWeb(notifications.isStudyCreatedByWeb());
+        account.setStudyCreatedByEmail(notifications.isStudyCreatedByEmail());
+        account.setStudyUpdatedResultByWeb(notifications.isStudyUpdatedByWeb());
+        account.setStudyUpdatedResultByEmail(notifications.isStudyUpdatedByEmail());
+        account.setStudyEnrollmentResultByWeb(notifications.isStudyEnrollmentResultByWeb());
+        account.setStudyEnrollmentResultByEmail(notifications.isStudyEnrollmentResultByEmail());
         accountRepository.save(account);
     }
 }
