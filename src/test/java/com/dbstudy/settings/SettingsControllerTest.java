@@ -125,5 +125,4 @@ class SettingsControllerTest {
                 .andExpect(model().attributeExists("passwordForm"))
                 .andExpect(model().attributeExists("account"));
     }
-
 }

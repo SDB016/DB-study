@@ -5,6 +5,7 @@ import com.dbstudy.account.CurrentUser;
 import com.dbstudy.domain.Account;
 import lombok.RequiredArgsConstructor;
 import org.dom4j.rule.Mode;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -21,13 +22,6 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class SettingsController {
 
-    @InitBinder("passwordForm")
-    public void initBinder(WebDataBinder webDataBinder) {
-        webDataBinder.addValidators(new PasswordFormValidator());
-    }
-
-    private final AccountService accountService;
-
     static final String SETTINGS_PROFILE_VIEW_NAME = "settings/profile";
     static final String SETTINGS_PROFILE_URL = "/settings/profile";
     static final String SETTINGS_PASSWORD_VIEW_NAME = "settings/password";
@@ -35,10 +29,18 @@ public class SettingsController {
     static final String SETTINGS_NOTIFICATION_VIEW_NAME = "settings/notifications";
     static final String SETTINGS_NOTIFICATION_URL = "/settings/notifications";
 
+    private final AccountService accountService;
+    private final ModelMapper modelMapper;
+
+    @InitBinder("passwordForm")
+    public void initBinder(WebDataBinder webDataBinder) {
+        webDataBinder.addValidators(new PasswordFormValidator());
+    }
+
     @GetMapping(SETTINGS_PROFILE_URL)
     public String updateProfileForm(@CurrentUser Account account, Model model) {
         model.addAttribute(account);
-        model.addAttribute(new Profile(account));
+        model.addAttribute(modelMapper.map(account, Profile.class));
         return SETTINGS_PROFILE_VIEW_NAME;
     }
 
@@ -76,7 +78,7 @@ public class SettingsController {
     @GetMapping(SETTINGS_NOTIFICATION_URL)
     public String updateNotificationsForm(@CurrentUser Account account, Model model) {
         model.addAttribute(account);
-        model.addAttribute(new Notifications(account));
+        model.addAttribute(modelMapper.map(account, Notifications.class));
         return SETTINGS_NOTIFICATION_VIEW_NAME;
     }
 
