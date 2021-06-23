@@ -1,9 +1,8 @@
 package com.dbstudy.account;
 
 import com.dbstudy.domain.Account;
-import com.dbstudy.settings.Notifications;
-import com.dbstudy.settings.PasswordForm;
-import com.dbstudy.settings.Profile;
+import com.dbstudy.settings.form.Notifications;
+import com.dbstudy.settings.form.Profile;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.mail.SimpleMailMessage;
@@ -62,7 +61,7 @@ public class AccountService implements UserDetailsService {
 
         javaMailSender.send(mailMessage);
     }
-    
+
     public void login(Account account) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
                 new UserAccount(account),
@@ -104,5 +103,11 @@ public class AccountService implements UserDetailsService {
     public void updateNotifications(Account account, Notifications notifications) {
         modelMapper.map(notifications, account);
         accountRepository.save(account);
+    }
+
+    public void updateNickname(Account account, String nickname) {
+        account.setNickname(nickname);
+        accountRepository.save(account);
+        login(account);
     }
 }
