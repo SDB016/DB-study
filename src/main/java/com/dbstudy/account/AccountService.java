@@ -1,6 +1,7 @@
 package com.dbstudy.account;
 
 import com.dbstudy.domain.Account;
+import com.dbstudy.settings.PasswordForm;
 import com.dbstudy.settings.Profile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
@@ -94,6 +95,10 @@ public class AccountService implements UserDetailsService {
         account.setBio(profile.getBio());
         account.setProfileImage(profile.getProfileImage());
         accountRepository.save(account);
-        // TODO 문제가 하나 더 남아있습니다.
+    }
+
+    public void updatePassword(Account account, String newPassword) {
+        account.setPassword(passwordEncoder.encode(newPassword));
+        accountRepository.save(account);
     }
 }
