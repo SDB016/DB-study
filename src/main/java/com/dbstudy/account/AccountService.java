@@ -1,6 +1,7 @@
 package com.dbstudy.account;
 
 import com.dbstudy.domain.Account;
+import com.dbstudy.domain.Tag;
 import com.dbstudy.settings.form.Notifications;
 import com.dbstudy.settings.form.Profile;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -119,5 +121,10 @@ public class AccountService implements UserDetailsService {
         mailMessage.setText("/login-by-email?token="+account.getEmailCheckToken() +
                 "&email="+account.getEmail());
         javaMailSender.send(mailMessage);
+    }
+
+    public void addTag(Account account, Tag tag) {
+        Optional<Account> byId = accountRepository.findById(account.getId());
+        byId.ifPresent(a -> a.getTags().add(tag));
     }
 }
