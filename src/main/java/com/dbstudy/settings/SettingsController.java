@@ -138,23 +138,32 @@ public class SettingsController {
         return SETTINGS_TAGS_VIEW_NAME;
     }
 
-    @PostMapping("/settings/tags/add")
+    @PostMapping(SETTINGS_TAGS_URL + "/add")
     @ResponseBody
-    public ResponseEntity addTags(@CurrentUser Account account, @RequestBody TagForm tagForm) {
+    public ResponseEntity addTag(@CurrentUser Account account, @RequestBody TagForm tagForm) {
         String title = tagForm.getTagTitle();
 //        Tag tag = tagRepository.findByTitle(title).orElseGet(()->tagRepository.save(Tag.builder()
 //        .title(tagForm.getTagTitle())
 //        .build()));
 
         Tag tag = tagRepository.findByTitle(title);
-        if (tag == null) {
-            tag = tagRepository.save(Tag.builder()
-                                        .title(tagForm.getTagTitle())
-                                        .build());
-        }
+        if (tag == null) { tag = tagRepository.save(Tag.builder().title(title).build()); }
 
         accountService.addTag(account, tag);
+        return ResponseEntity.ok().build();
+    }
 
+    @PostMapping(SETTINGS_TAGS_URL + "/remove")
+    @ResponseBody
+    public ResponseEntity removeTag(@CurrentUser Account account, @RequestBody TagForm tagForm) {
+        String title = tagForm.getTagTitle();
+
+        Tag tag = tagRepository.findByTitle(title);
+        if (tag == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        accountService.removeTag(account, tag);
         return ResponseEntity.ok().build();
     }
 }
