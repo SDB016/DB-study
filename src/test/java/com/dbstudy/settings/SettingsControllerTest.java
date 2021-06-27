@@ -68,7 +68,7 @@ class SettingsControllerTest {
 
         Tag newTag = tagRepository.findByTitle("newTag");
         assertNotNull(newTag);
-        Account account = accountRepository.findByNickname("dongbin");
+        Account account = accountRepository.findByNickname("dongbin"); // detached -> attach (transaction)
         assertTrue(account.getTags().contains(newTag));
     }
 
