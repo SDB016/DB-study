@@ -1,7 +1,7 @@
 package com.dbstudy.settings;
 
 import com.dbstudy.account.AccountService;
-import com.dbstudy.account.CurrentUser;
+import com.dbstudy.account.CurrentAccount;
 import com.dbstudy.domain.Account;
 import com.dbstudy.domain.Tag;
 import com.dbstudy.settings.form.*;
@@ -56,14 +56,14 @@ public class SettingsController {
     }
 
     @GetMapping(PROFILE)
-    public String updateProfileForm(@CurrentUser Account account, Model model) {
+    public String updateProfileForm(@CurrentAccount Account account, Model model) {
         model.addAttribute(account);
         model.addAttribute(modelMapper.map(account, Profile.class));
         return SETTINGS + PROFILE;
     }
 
     @PostMapping(PROFILE)
-    public String updateProfile(@CurrentUser Account account, @Valid @ModelAttribute Profile profile, Errors errors,
+    public String updateProfile(@CurrentAccount Account account, @Valid @ModelAttribute Profile profile, Errors errors,
                                 Model model, RedirectAttributes attributes) {
         if (errors.hasErrors()) {
             model.addAttribute(account);
@@ -75,14 +75,14 @@ public class SettingsController {
     }
 
     @GetMapping(PASSWORD)
-    public String updatePasswordForm(@CurrentUser Account account, Model model){
+    public String updatePasswordForm(@CurrentAccount Account account, Model model){
         model.addAttribute(account);
         model.addAttribute("passwordForm", new PasswordForm());
         return SETTINGS + PASSWORD;
     }
 
     @PostMapping(PASSWORD)
-    public String updatePassword(@CurrentUser Account account, @Valid @ModelAttribute PasswordForm passwordForm, Errors errors,
+    public String updatePassword(@CurrentAccount Account account, @Valid @ModelAttribute PasswordForm passwordForm, Errors errors,
                                  Model model, RedirectAttributes attributes){
         if(errors.hasErrors()){
             model.addAttribute(account);
@@ -94,14 +94,14 @@ public class SettingsController {
     }
 
     @GetMapping(NOTIFICATIONS)
-    public String updateNotificationsForm(@CurrentUser Account account, Model model) {
+    public String updateNotificationsForm(@CurrentAccount Account account, Model model) {
         model.addAttribute(account);
         model.addAttribute(modelMapper.map(account, Notifications.class));
         return SETTINGS + NOTIFICATIONS;
     }
 
     @PostMapping(NOTIFICATIONS)
-    public String updateNotifications(@CurrentUser Account account, @Valid @ModelAttribute Notifications notifications, Errors errors,
+    public String updateNotifications(@CurrentAccount Account account, @Valid @ModelAttribute Notifications notifications, Errors errors,
                                       Model model, RedirectAttributes attributes) {
         if (errors.hasErrors()) {
             model.addAttribute(account);
@@ -114,14 +114,14 @@ public class SettingsController {
     }
 
     @GetMapping(ACCOUNT)
-    public String updateAccountForm(@CurrentUser Account account, Model model) {
+    public String updateAccountForm(@CurrentAccount Account account, Model model) {
         model.addAttribute(account);
         model.addAttribute(modelMapper.map(account, NicknameForm.class));
         return SETTINGS + ACCOUNT;
     }
 
     @PostMapping(ACCOUNT)
-    public String updateAccount(@CurrentUser Account account, @Valid @ModelAttribute NicknameForm nicknameForm, Errors errors,
+    public String updateAccount(@CurrentAccount Account account, @Valid @ModelAttribute NicknameForm nicknameForm, Errors errors,
                                 Model model, RedirectAttributes attributes) {
         if (errors.hasErrors()) {
             model.addAttribute(account);
@@ -133,7 +133,7 @@ public class SettingsController {
     }
 
     @GetMapping(TAGS)
-    public String updateTags(@CurrentUser Account account, Model model) throws JsonProcessingException {
+    public String updateTags(@CurrentAccount Account account, Model model) throws JsonProcessingException {
         model.addAttribute(account);
 
         Set<Tag> tags = accountService.getTags(account);
@@ -147,7 +147,7 @@ public class SettingsController {
 
     @PostMapping(TAGS + "/add")
     @ResponseBody
-    public ResponseEntity addTag(@CurrentUser Account account, @RequestBody TagForm tagForm) {
+    public ResponseEntity addTag(@CurrentAccount Account account, @RequestBody TagForm tagForm) {
         String title = tagForm.getTagTitle();
 //        Tag tag = tagRepository.findByTitle(title).orElseGet(()->tagRepository.save(Tag.builder()
 //        .title(tagForm.getTagTitle())
@@ -162,7 +162,7 @@ public class SettingsController {
 
     @PostMapping(TAGS + "/remove")
     @ResponseBody
-    public ResponseEntity removeTag(@CurrentUser Account account, @RequestBody TagForm tagForm) {
+    public ResponseEntity removeTag(@CurrentAccount Account account, @RequestBody TagForm tagForm) {
         String title = tagForm.getTagTitle();
 
         Tag tag = tagRepository.findByTitle(title);
