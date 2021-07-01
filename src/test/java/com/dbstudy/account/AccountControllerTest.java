@@ -1,6 +1,8 @@
 package com.dbstudy.account;
 
 import com.dbstudy.domain.Account;
+import com.dbstudy.mail.EmailMessage;
+import com.dbstudy.mail.EmailService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +36,7 @@ class AccountControllerTest {
     private AccountRepository accountRepository;
 
     @MockBean
-    JavaMailSender javaMailSender;
+    EmailService emailService;
 
 
     @DisplayName("회원가입 화면 보이는지 테스트")
@@ -114,7 +116,7 @@ class AccountControllerTest {
         assertTrue(accountRepository.existsByEmail("dongbin@email.com"));
         assertTrue(accountRepository.existsByNickname("dongbin"));
 
-        then(javaMailSender).should().send(any(SimpleMailMessage.class));
+        then(emailService).should().sendEmail(any(EmailMessage.class));
     }
 
 }
