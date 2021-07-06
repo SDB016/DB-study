@@ -1,5 +1,6 @@
 package com.dbstudy.domain;
 
+import com.dbstudy.account.UserAccount;
 import lombok.*;
 import org.thymeleaf.standard.expression.Each;
 
@@ -7,6 +8,12 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+
+@NamedEntityGraph(name = "Study.withAll", attributeNodes = {
+        @NamedAttributeNode("tags"),
+        @NamedAttributeNode("zones"),
+        @NamedAttributeNode("managers"),
+        @NamedAttributeNode("members")})
 
 @Entity
 @Getter @Setter @EqualsAndHashCode(of = "id")
@@ -47,16 +54,29 @@ public class Study {
 
     private LocalDateTime recruitingUpdatedDateTime;
 
-    private Boolean recruiting;
+    private boolean recruiting;
 
-    private Boolean published;
+    private boolean published;
 
-    private Boolean closed;
+    private boolean closed;
 
-    private Boolean useBanner;
+    private boolean useBanner;
 
 
     public void addManager(Account account) {
         this.managers.add(account);
+    }
+
+    public boolean isJoinable(UserAccount userAccount) {
+        Account account = userAccount.getAccount();
+        return this.isPublished() && this.isRecruiting() && !this.members.contains(account) && !this.managers.contains(account);
+    }
+
+    public boolean isMember(UserAccount userAccount) {
+        return this.members.contains(userAccount.getAccount());
+    }
+
+    public boolean isManager(UserAccount userAccount) {
+        return this.managers.contains(userAccount.getAccount());
     }
 }
