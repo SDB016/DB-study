@@ -6,6 +6,7 @@ import com.dbstudy.domain.Study;
 import com.dbstudy.study.form.StudyForm;
 import com.dbstudy.study.form.validator.StudyFormValidator;
 import lombok.RequiredArgsConstructor;
+import org.dom4j.rule.Mode;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,8 +43,9 @@ public class StudyController {
     }
 
     @PostMapping("/new-study")
-    public String newStudySubmit(@CurrentAccount Account account, @Valid StudyForm studyForm, Errors errors) {
+    public String newStudySubmit(@CurrentAccount Account account, @Valid StudyForm studyForm, Errors errors, Model model) {
         if (errors.hasErrors()) {
+            model.addAttribute(account);
             return "study/form";
         }
 

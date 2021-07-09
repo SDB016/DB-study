@@ -2,7 +2,6 @@ package com.dbstudy.domain;
 
 import com.dbstudy.account.UserAccount;
 import lombok.*;
-import org.thymeleaf.standard.expression.Each;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -65,6 +64,10 @@ public class Study {
 
     public void addManager(Account account) {
         this.managers.add(account);
+    }
+
+    public void addMember(Account account) {
+        this.members.add(account);
     }
 
     public boolean isJoinable(UserAccount userAccount) {
