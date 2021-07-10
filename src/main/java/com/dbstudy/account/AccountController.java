@@ -84,13 +84,16 @@ public class AccountController {
     }
 
     @GetMapping("/profile/{nickname}")
-    public String viewProfile(@PathVariable String nickname, Model model, @CurrentAccount Account account) {
+    public String viewProfile(@PathVariable String nickname, Model model, @CurrentAccount Account account) {/*
         Account byNickname = accountRepository.findByNickname(nickname);
         if(byNickname==null){
             throw new IllegalArgumentException(nickname+"에 해당하는 유저가 없습니다.");
         }
         model.addAttribute(byNickname); //"account"라는 이름 자동으로 들어감 (타입에 해당하는 camel case)
-        model.addAttribute("isOwner", byNickname.equals(account));
+        model.addAttribute("isOwner", byNickname.equals(account));*/
+        Account accountToView = accountService.getAccount(nickname);
+        model.addAttribute(accountToView);
+        model.addAttribute("isOwner", accountToView.equals(account));
         return "account/profile";
 
     }
