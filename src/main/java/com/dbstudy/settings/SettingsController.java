@@ -9,6 +9,7 @@ import com.dbstudy.settings.form.*;
 import com.dbstudy.settings.validator.NicknameFormValidator;
 import com.dbstudy.settings.validator.PasswordFormValidator;
 import com.dbstudy.tag.TagRepository;
+import com.dbstudy.tag.TagService;
 import com.dbstudy.zone.ZoneRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,6 +48,7 @@ public class SettingsController {
     static final String ZONES = "/zones";
 
     private final AccountService accountService;
+    private final TagService tagService;
     private final ModelMapper modelMapper;
     private final NicknameFormValidator nicknameFormValidator;
     private final TagRepository tagRepository;
@@ -171,13 +173,7 @@ public class SettingsController {
     @PostMapping(TAGS + "/remove")
     @ResponseBody
     public ResponseEntity removeTag(@CurrentAccount Account account, @RequestBody TagForm tagForm) {
-        String title = tagForm.getTagTitle();
-
-        Tag tag = tagRepository.findByTitle(title);
-        if (tag == null) {
-            return ResponseEntity.badRequest().build();
-        }
-
+        Tag tag = tagService.findOrCreateNew(tagForm.getTagTitle());
         accountService.removeTag(account, tag);
         return ResponseEntity.ok().build();
     }

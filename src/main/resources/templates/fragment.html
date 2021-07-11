@@ -71,7 +71,7 @@
         <ul class="navbar-nav me-auto">
             <li class="nav-item">
                 <form th:action="@{/search/study}" class="form-inline" method="get">
-                    <input class="form-control mr-sm-2" name="keyword" type="search" placeholder="스터디 찾기" aria-label="Search" />
+                    <input class="form-control me-sm-2" name="keyword" type="search" placeholder="스터디 찾기" aria-label="Search" />
                 </form>
             </li>
         </ul>
@@ -193,12 +193,12 @@
         <div class="col-10">
             <p>
                 <span th:each="tag: ${study.tags}"
-                      class="font-weight-light text-monospace badge badge-pill badge-info mr-3">
+                      class="font-weight-light font-monospace badge rounded-pill bg-success me-3">
                     <a th:href="@{'/search/tag/' + ${tag.title}}" class="text-decoration-none text-white">
                         <i class="fa fa-tag"></i> <span th:text="${tag.title}">Tag</span>
                     </a>
                 </span>
-                <span th:each="zone: ${study.zones}" class="font-weight-light text-monospace badge badge-primary mr-3">
+                <span th:each="zone: ${study.zones}" class="font-weight-light font-monospace badge bg-warning me-3">
                     <a th:href="@{'/search/zone/' + ${zone.id}}" class="text-decoration-none text-white">
                         <i class="fa fa-globe"></i> <span th:text="${zone.localNameOfCity}">City</span>
                     </a>
@@ -229,8 +229,8 @@
 <div th:fragment="member-list (members, isManager)" class="row px-3 justify-content-center">
     <ul class="list-unstyled col-10">
         <li class="d-flex align-items-center mt-3" th:each="member: ${members}">
-            <svg th:if="${#strings.isEmpty(member?.profileImage)}" th:data-jdenticon-value="${member.nickname}" width="64" height="64" class="flex-shrink-0 rounded border bg-light mr-3"></svg>
-            <img th:if="${!#strings.isEmpty(member?.profileImage)}" class="flex-shrink-0 rounded border mr-3" th:src="${member?.profileImage}" width="64" height="64" />
+            <svg th:if="${#strings.isEmpty(member?.profileImage)}" th:data-jdenticon-value="${member.nickname}" width="64" height="64" class="flex-shrink-0 rounded border bg-light me-3"></svg>
+            <img th:if="${!#strings.isEmpty(member?.profileImage)}" class="flex-shrink-0 rounded border me-3" th:src="${member?.profileImage}" width="64" height="64" />
             <div class="flex-grow-1 ms-3">
                 <h5 class="mt-0 mb-1"><span th:text="${member.nickname}"></span> <span th:if="${isManager}" class="badge bg-primary">관리자</span></h5>
                 <span th:text="${member.bio}"></span>
@@ -282,7 +282,6 @@
     }())
 </script>
 
-
 <script type="application/javascript" th:inline="javascript" th:fragment="ajax-csrf-header">
     $(function (){
         var csrfToken = /*[[${_csrf.token}]]*/null;
@@ -297,5 +296,102 @@
         $('[data-toggle="tooltip"]').tooltip()
     })
 </script>
+
+<div th:fragment="update-tags (baseUrl)">
+    <script src="/node_modules/@yaireo/tagify/dist/tagify.min.js"></script>
+    <script type="application/javascript">
+        $(function(){
+            function tagRequest(url, tagTitle){
+                $.ajax({
+                    dataType:"json",
+                    autocomplete:{
+                        enabled: true,
+                        rightKey: true,
+                    },
+                    contentType:"application/json; charset=utf-8",
+                    method:"POST",
+                    url: "[(${baseUrl})]" + url,
+                    data: JSON.stringify({'tagTitle':tagTitle})
+                }).done(function (data, status){
+                    console.log("${data} and status is ${status}");
+                });
+            }
+
+            function onAdd(e){
+                tagRequest("/add", e.detail.data.value);
+            }
+
+            function onRemove(e){
+                tagRequest("/remove", e.detail.data.value);
+            }
+
+            var tagInput = document.querySelector("#tags");
+
+            var tagify = new Tagify(tagInput, {
+                pattern: /^.{0,20}$/,
+                whitelist: JSON.parse(document.querySelector("#whitelist").textContent),
+                dropdown: {
+                    enabled: 1, // suggest tags after a single character input
+                } // map tags
+            });
+
+            tagify.on("add", onAdd);
+            tagify.on("remove", onRemove);
+
+            // add a class to Tagify's input element
+            tagify.DOM.input.classList.add('form-control');
+            tagify.DOM.scope.parentNode.insertBefore(tagify.DOM.input, tagify.DOM.scope);
+        });
+    </script>
+</div>
+
+<div th:fragment="update-zones (baseUrl)">
+    <script src="/node_modules/@yaireo/tagify/dist/tagify.min.js"></script>
+    <script type="application/javascript">
+        $(function () {
+            function tagRequest(url, zoneName) {
+                $.ajax({
+                    dataType: "json",
+                    autocomplete: {
+                        enabled: true,
+                        rightKey: true,
+                    },
+                    contentType: "application/json; charset=utf-8",
+                    method: "POST",
+                    url: "[(${baseUrl})]" + url,
+                    data: JSON.stringify({'zoneName': zoneName})
+                }).done(function (data, status) {
+                    console.log("${data} and status is ${status}");
+                });
+            }
+
+            function onAdd(e) {
+                tagRequest("/add", e.detail.data.value);
+            }
+
+            function onRemove(e) {
+                tagRequest("/remove", e.detail.data.value);
+            }
+
+            var tagInput = document.querySelector("#zones");
+
+            var tagify = new Tagify(tagInput, {
+                enforceWhitelist: true,
+                whitelist: JSON.parse(document.querySelector("#whitelist").textContent),
+                dropdown : {
+                    enabled: 1, // suggest zones after a single character input
+                } // map zones
+            });
+
+            tagify.on("add", onAdd);
+            tagify.on("remove", onRemove);
+
+            // add a class to Tagify's input element
+            tagify.DOM.input.classList.add('form-control');
+            // re-place Tagify's input element outside of the  element (tagify.DOM.scope), just before it
+            tagify.DOM.scope.parentNode.insertBefore(tagify.DOM.input, tagify.DOM.scope);
+        });
+    </script>
+</div>
 
 </html>
