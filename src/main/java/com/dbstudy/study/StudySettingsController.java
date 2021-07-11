@@ -25,20 +25,25 @@ import java.nio.file.AccessDeniedException;
 @RequiredArgsConstructor
 public class StudySettingsController {
 
+    public static final String SETTINGS = "/settings";
+    public static final String STUDYSETTINGS = "study/settings";
+    public static final String DESCRIPTION = "/description";
+    public static final String BANNER = "/banner";
+
     private final StudyRepository studyRepository;
     private final StudyService studyService;
     private final ModelMapper modelMapper;
 
-    @GetMapping("/description")
+    @GetMapping(DESCRIPTION)
     public String viewStudySetting(@CurrentAccount Account account, @PathVariable String path, Model model) {
         Study study = studyRepository.findByPath(path);
         model.addAttribute(study);
         model.addAttribute(account);
         model.addAttribute(modelMapper.map(study, StudyDescriptionForm.class));
-        return "study/settings/description";
+        return STUDYSETTINGS + DESCRIPTION;
     }
 
-    @PostMapping("/description")
+    @PostMapping(DESCRIPTION)
     public String updateStudyInfo(@CurrentAccount Account account, @PathVariable String path,
                                   @Valid StudyDescriptionForm form, Errors errors,
                                   Model model, RedirectAttributes attributes) throws AccessDeniedException {
@@ -47,16 +52,46 @@ public class StudySettingsController {
         if (errors.hasErrors()) {
             model.addAttribute(account);
             model.addAttribute(study);
-            return "study/settings/description";
+            return STUDYSETTINGS + DESCRIPTION;
         }
         studyService.updateStudyDescription(study, form);
         attributes.addFlashAttribute("message", "스터디 소개를 수정했습니다.");
-        return "redirect:/study/" + getpath(path) + "/settings/description";
+        return "redirect:/study/" + getPath(path) + SETTINGS + DESCRIPTION;
     }
 
-    private String getpath(String path) {
+    private String getPath(String path) {
         return URLEncoder.encode(path, StandardCharsets.UTF_8);
     }
 
+    @GetMapping(BANNER)
+    public String studyImageForm(@CurrentAccount Account account, @PathVariable String path, Model model) {
+        Study study = studyService.getStudyToUpdate(account, path);
+        model.addAttribute(account);
+        model.addAttribute(study);
+        return STUDYSETTINGS + BANNER;
+    }
+
+    @PostMapping("banner")
+    public String studyImageSubmit(@CurrentAccount Account account, @PathVariable String path,
+                                   String image, RedirectAttributes attributes) {
+        Study study = studyService.getStudyToUpdate(account, path);
+        studyService.updateStudyImage(study, image);
+        attributes.addFlashAttribute("message", "스터디 이미지를 수정했습니다.");
+        return "redirect:/study/" + getPath(path) + SETTINGS + BANNER;
+    }
+
+    @PostMapping(BANNER+"/enable")
+    public String enableStudyBanner(@CurrentAccount Account account, @PathVariable String path) {
+        Study study = studyService.getStudyToUpdate(account, path);
+        studyService.enableStudyBanner(study);
+        return "redirect:/study/" + getPath(path) + SETTINGS + BANNER;
+    }
+
+    @PostMapping(BANNER+"/disable")
+    public String disableStudyBanner(@CurrentAccount Account account, @PathVariable String path) {
+        Study study = studyService.getStudyToUpdate(account, path);
+        studyService.disableStudyBanner(study);
+        return "redirect:/study/" + getPath(path) + SETTINGS + BANNER;
+    }
 
 }

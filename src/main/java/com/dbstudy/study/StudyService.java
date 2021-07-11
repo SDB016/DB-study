@@ -5,10 +5,10 @@ import com.dbstudy.domain.Study;
 import com.dbstudy.study.form.StudyDescriptionForm;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.AccessDeniedException;
 
 @Service
 @Transactional
@@ -24,7 +24,7 @@ public class StudyService {
         return newStudy;
     }
 
-    public Study getStudyToUpdate(Account account, String path) throws AccessDeniedException {
+    public Study getStudyToUpdate(Account account, String path) {
         Study study = this.getStudy(path);
         if (!account.isManagerOf(study)) {
             throw new AccessDeniedException("해당 기능을 사용할 수 없습니다.");
@@ -42,5 +42,17 @@ public class StudyService {
 
     public void updateStudyDescription(Study study, StudyDescriptionForm form) {
         modelMapper.map(form, study);
+    }
+
+    public void updateStudyImage(Study study, String image) {
+        study.setImage(image);
+    }
+
+    public void enableStudyBanner(Study study) {
+        study.setUseBanner(true);
+    }
+
+    public void disableStudyBanner(Study study) {
+        study.setUseBanner(false);
     }
 }
