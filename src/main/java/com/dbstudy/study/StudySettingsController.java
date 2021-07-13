@@ -42,6 +42,7 @@ public class StudySettingsController {
     public static final String BANNER = "/banner";
     public static final String TAGS = "/tags";
     public static final String ZONES = "/zones";
+    public static final String STUDY = "/study";
 
     private final ModelMapper modelMapper;
     private final ObjectMapper objectMapper;
@@ -142,8 +143,8 @@ public class StudySettingsController {
     public ResponseEntity removeTag(@CurrentAccount Account account, @PathVariable String path,
                                     @RequestBody TagForm tagForm) {
 
+        Study study = studyService.getStudyToUpdateTag(account, path);
         Tag tag = tagRepository.findByTitle(tagForm.getTagTitle());
-        Study study = studyService.getStudyToUpdate(account, path);
         if (tag == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -171,7 +172,7 @@ public class StudySettingsController {
     @ResponseBody
     public ResponseEntity addZone(@CurrentAccount Account account, @PathVariable String path,
                                   @RequestBody ZoneForm zoneForm) {
-        Study study = studyService.getStudyToUpdate(account, path);
+        Study study = studyService.getStudyToUpdateZone(account, path);
         Zone zone = zoneRepository.findByCityAndProvince(zoneForm.getCityName(), zoneForm.getProvinceName());
         if (zone == null) {
             return ResponseEntity.badRequest().build();
@@ -185,7 +186,7 @@ public class StudySettingsController {
     @ResponseBody
     public ResponseEntity removeZone(@CurrentAccount Account account, @PathVariable String path,
                                   @RequestBody ZoneForm zoneForm) {
-        Study study = studyService.getStudyToUpdate(account, path);
+        Study study = studyService.getStudyToUpdateZone(account, path);
         Zone zone = zoneRepository.findByCityAndProvince(zoneForm.getCityName(), zoneForm.getProvinceName());
         if (zone == null) {
             return ResponseEntity.badRequest().build();
@@ -193,5 +194,53 @@ public class StudySettingsController {
 
         studyService.removeZone(study, zone);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(STUDY)
+    public String studySettingForm(@CurrentAccount Account account, @PathVariable String path, Model model) {
+        Study study = studyService.getStudyToUpdate(account, path);
+        model.addAttribute(account);
+        model.addAttribute(study);
+        return STUDYSETTINGS + STUDY;
+    }
+
+    @PostMapping(STUDY + "/publish")
+    public String studyPublish(@CurrentAccount Account account, @PathVariable String path, RedirectAttributes attributes) {
+        Study study = studyService.getStudyToUpdateStatus(account, path);
+        studyService.publish(study);
+        attributes.addFlashAttribute("message", "스터디를 공개했습니다.");
+        return "redirect:/study/" + getPath(path) + SETTINGS + STUDY;
+    }
+
+    @PostMapping(STUDY + "/close")
+    public String studyClose(@CurrentAccount Account account, @PathVariable String path, RedirectAttributes attributes) {
+        Study study = studyService.getStudyToUpdateStatus(account, path);
+        studyService.close(study);
+        attributes.addFlashAttribute("message", "스터디를 종료했습니다.");
+        return "redirect:/study/" + getPath(path) + SETTINGS + STUDY;
+    }
+
+    @PostMapping("recruit/start")
+    public String startRecruit(@CurrentAccount Account account, @PathVariable String path, RedirectAttributes attributes) {
+        Study study = studyService.getStudyToUpdateStatus(account, path);
+        if (!study.canUpdateRecruiting()) {
+            attributes.addFlashAttribute("message", "1시간 안에 인원 모집 설정을 여러번 변경할 수 없습니다.");
+            return "redirect:/study/" + getPath(path) + SETTINGS + STUDY;
+        }
+        studyService.startRecruiting(study);
+        attributes.addFlashAttribute("message", "인원 모집을 시작합니다.");
+        return "redirect:/study/" + getPath(path) + SETTINGS + STUDY;
+    }
+
+    @PostMapping("recruit/stop")
+    public String stopRecruit(@CurrentAccount Account account, @PathVariable String path, RedirectAttributes attributes) {
+        Study study = studyService.getStudyToUpdateStatus(account, path);
+        if (!study.canUpdateRecruiting()) {
+            attributes.addFlashAttribute("message", "1시간 안에 인원 모집 설정을 여러번 변경할 수 없습니다.");
+            return "redirect:/study/" + getPath(path) + SETTINGS + STUDY;
+        }
+        studyService.stopRecruiting(study);
+        attributes.addFlashAttribute("message", "인원 모집을 종료합니다.");
+        return "redirect:/study/" + getPath(path) + SETTINGS + STUDY;
     }
 }
