@@ -6,11 +6,9 @@ import com.dbstudy.domain.Study;
 import com.dbstudy.study.form.StudyForm;
 import com.dbstudy.study.form.validator.StudyFormValidator;
 import lombok.RequiredArgsConstructor;
-import org.dom4j.rule.Mode;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -67,5 +65,19 @@ public class StudyController {
         Study study = studyRepository.findByPath(path);
         model.addAttribute(study);
         return "study/members";
+    }
+
+    @GetMapping("/study/{path}/join")
+    public String addStudyMember(@CurrentAccount Account account, @PathVariable String path) {
+        Study study = studyService.getStudyToUpdateMember(path);
+        studyService.addMember(study, account);
+        return "redirect:/study/" + study.getEncodedPath() + "/members";
+    }
+
+    @GetMapping("/study/{path}/leave")
+    public String leaveStudyMember(@CurrentAccount Account account, @PathVariable String path) {
+        Study study = studyService.getStudyToUpdateMember(path);
+        studyService.removeMember(study, account);
+        return "redirect:/study/" + study.getEncodedPath() + "/members";
     }
 }

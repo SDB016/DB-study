@@ -30,6 +30,12 @@ public class StudyService {
         return newStudy;
     }
 
+    public Study getStudyToUpdateMember(String path) {
+        Study study = studyRepository.findStudyWithMembersByPath(path);
+        checkIfExistingStudy(path, study);
+        return study;
+    }
+
     public Study getStudyToUpdate(Account account, String path) {
         Study study = this.getStudy(path);
         checkIfManager(account, study);
@@ -152,6 +158,22 @@ public class StudyService {
             studyRepository.delete(study);
         } else {
             throw new IllegalArgumentException("스터디를 삭제할 수 없습니다.");
+        }
+    }
+
+    public void addMember(Study study, Account account) {
+        if (!study.getMembers().contains(account) && !study.getManagers().contains(account)) {
+            study.addMember(account);
+        } else {
+            throw new IllegalArgumentException("이미 참여하고 있는 스터디입니다.");
+        }
+    }
+
+    public void removeMember(Study study, Account account) {
+        if (study.getMembers().contains(account) || study.getManagers().contains(account)) {
+            study.removeMember(account);
+        } else {
+            throw new IllegalArgumentException("참여하고 있지 않은 스터디입니다.");
         }
     }
 }
