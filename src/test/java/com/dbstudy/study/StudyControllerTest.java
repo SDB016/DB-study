@@ -23,15 +23,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class StudyControllerTest {
 
-    @Autowired MockMvc mockMvc;
-    @Autowired StudyService studyService;
-    @Autowired StudyRepository studyRepository;
-    @Autowired AccountRepository accountRepository;
-
-    @AfterEach
-    void afterEach() {
-        accountRepository.deleteAll();
-    }
+    @Autowired protected MockMvc mockMvc;
+    @Autowired protected StudyService studyService;
+    @Autowired protected StudyRepository studyRepository;
+    @Autowired protected AccountRepository accountRepository;
 
     @Test
     @WithAccount("dongbin")
@@ -104,5 +99,52 @@ class StudyControllerTest {
                 .andExpect(view().name("study/view"))
                 .andExpect(model().attributeExists("account"))
                 .andExpect(model().attributeExists("study"));
+    }
+
+    @Test
+    @WithAccount("dongbin")
+    @DisplayName("스터디 가입")
+    void joinStudy() throws Exception {
+        Account account = createAccount("ehdqls");
+        Study study = createStudy("testStudy",account);
+
+        mockMvc.perform(get("/study/" + study.getPath() + "/join"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/study/" + study.getPath() + "/members"));
+
+        Account dongbin = accountRepository.findByNickname("dongbin");
+        assertTrue(study.getMembers().contains(dongbin));
+    }
+
+    @Test
+    @WithAccount("dongbin")
+    @DisplayName("스터디 탈퇴")
+    void leaveStudy() throws Exception {
+        Account account = createAccount("ehdqls");
+        Study study = createStudy("testStudy",account);
+
+        Account dongbin = accountRepository.findByNickname("dongbin");
+        studyService.addMember(study, dongbin);
+
+        mockMvc.perform(get("/study/" + study.getPath() + "/leave"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/study/" + study.getPath() + "/members"));
+
+        assertFalse(study.getMembers().contains(dongbin));
+    }
+
+    protected Study createStudy(String path, Account account) {
+        Study study = new Study();
+        study.setPath(path);
+        studyService.createNewStudy(study, account);
+        return study;
+    }
+
+    protected Account createAccount(String nickname) {
+        Account account = new Account();
+        account.setNickname(nickname);
+        account.setEmail(nickname+"@email.com");
+        accountRepository.save(account);
+        return account;
     }
 }

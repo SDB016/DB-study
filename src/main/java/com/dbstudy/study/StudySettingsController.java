@@ -54,7 +54,7 @@ public class StudySettingsController {
 
     @GetMapping(DESCRIPTION)
     public String viewStudySetting(@CurrentAccount Account account, @PathVariable String path, Model model) {
-        Study study = studyRepository.findByPath(path);
+        Study study = studyService.getStudyToUpdate(account, path);
         model.addAttribute(study);
         model.addAttribute(account);
         model.addAttribute(modelMapper.map(study, StudyDescriptionForm.class));
@@ -64,7 +64,7 @@ public class StudySettingsController {
     @PostMapping(DESCRIPTION)
     public String updateStudyInfo(@CurrentAccount Account account, @PathVariable String path,
                                   @Valid StudyDescriptionForm form, Errors errors,
-                                  Model model, RedirectAttributes attributes) throws AccessDeniedException {
+                                  Model model, RedirectAttributes attributes) {
         Study study = studyService.getStudyToUpdate(account, path);
 
         if (errors.hasErrors()) {
