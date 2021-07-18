@@ -1,5 +1,6 @@
 package com.dbstudy.event.validator;
 
+import com.dbstudy.domain.Event;
 import com.dbstudy.event.form.EventForm;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -29,6 +30,12 @@ public class EventValidator implements Validator {
 
         if (isNotValidStartDateTime(eventForm)) {
             errors.rejectValue("startDateTime","wrong.datetime","모임 시작 일시를 정확히 입력하세요.");
+        }
+    }
+
+    public void validateUpdateForm(EventForm eventForm, Event event, Errors errors) {
+        if (eventForm.getLimitOfEnrollments() < event.getNumberOfAcceptedEnrollments()) {
+            errors.rejectValue("limitOfEnrollments","wrong.value","확정된 참가 신청보다 모집 인원수가 커야합니다.");
         }
     }
 
