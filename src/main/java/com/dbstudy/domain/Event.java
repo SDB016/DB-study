@@ -9,6 +9,10 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@NamedEntityGraph(
+        name = "Event.withEnrollments",
+        attributeNodes = @NamedAttributeNode("enrollments")
+)
 @Entity
 @Getter @Setter @EqualsAndHashCode(of = "id")
 public class Event {
@@ -49,12 +53,17 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private EventType eventType;
 
+
     public boolean isEnrollableFor(UserAccount userAccount) {
         return isNotClosed() && !isAlreadyEnrolled(userAccount);
     }
 
     public boolean isDisenrollableFor(UserAccount userAccount) {
         return isNotClosed() && isAlreadyEnrolled(userAccount);
+    }
+
+    public int numberOfRemainSpots() {
+        return this.limitOfEnrollments - (int) this.enrollments.stream().filter(Enrollment::isAccepted).count();
     }
 
     private boolean isNotClosed() {
