@@ -101,7 +101,7 @@
                     <img th:if="${!#strings.isEmpty(account?.profileImage)}" th:src="${account.profileImage}"
                          width="24" height="24" class="rounded border"/>
                 </a>
-                <div class="dropdown-menu dropdown-menu-sm-right" aria-labelledby="userDropdown">
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <h6 class="dropdown-header">
                         <span sec:authentication="name">Username</span>
                     </h6>
@@ -250,7 +250,7 @@
     <script src="/node_modules/summernote/dist/summernote-bs4.js"></script>
     <script type="application/javascript">
         $(function (){
-            $('#fullDescription').summernote({
+            $('.editor').summernote({
                 fontNames: ['Arial','Arial Black', 'Comic Sans MS', 'Courier New', 'Noto Sans KR', 'Merriweather'],
                 placeholder: '스터디의 목표, 일정, 진행방식, 사용할 교재 또는 강의 그리고 모집중인 스터디원 등 스터디에 대해 자세히 적허 주세요.',
                 tabSize: 2,
