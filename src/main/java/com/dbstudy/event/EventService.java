@@ -51,13 +51,32 @@ public class EventService {
 
     public void disEnrollment(Event event, Account account) {
         Enrollment enrollment = enrollmentRepository.findByEventAndAccount(event, account);
+
         if (enrollment == null) {
             throw new IllegalArgumentException("삭제할 Enrollment가 없습니다.");
         }
 
-        event.removeEnrollment(enrollment);
-        enrollmentRepository.delete(enrollment);
+        if (!enrollment.isAttended()) {
+            event.removeEnrollment(enrollment);
+            enrollmentRepository.delete(enrollment);
 
-        event.acceptNextWaitingEnrollment();
+            event.acceptNextWaitingEnrollment();
+        }
+    }
+
+    public void acceptEnrollment(Event event, Enrollment enrollment) {
+        event.accept(enrollment);
+    }
+
+    public void rejectEnrollment(Event event, Enrollment enrollment) {
+        event.reject(enrollment);
+    }
+
+    public void checkinEnrollment(Event event, Enrollment enrollment) {
+        enrollment.setAttended(true);
+    }
+
+    public void cancelCheckinEnrollment(Event event, Enrollment enrollment) {
+        enrollment.setAttended(false);
     }
 }
