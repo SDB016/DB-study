@@ -176,4 +176,10 @@ public class StudyService {
             throw new IllegalArgumentException("참여하고 있지 않은 스터디입니다.");
         }
     }
+
+    public Study getStudyToEnroll(String path) {
+        Study study = studyRepository.findStudyOnlyByPath(path);
+        checkIfExistingStudy(path, study);
+        return study;
+    }
 }
