@@ -1,5 +1,6 @@
 package com.dbstudy.modules.account;
 
+import com.dbstudy.infra.MockMvcTest;
 import com.dbstudy.modules.tag.Tag;
 import com.dbstudy.modules.zone.Zone;
 import com.dbstudy.modules.tag.TagForm;
@@ -26,9 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@Transactional
+@MockMvcTest
 class SettingsControllerTest {
 
     @Autowired MockMvc mockMvc;

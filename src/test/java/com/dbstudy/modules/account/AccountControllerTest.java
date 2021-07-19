@@ -1,5 +1,6 @@
 package com.dbstudy.modules.account;
 
+import com.dbstudy.infra.MockMvcTest;
 import com.dbstudy.infra.mail.EmailMessage;
 import com.dbstudy.infra.mail.EmailService;
 import org.junit.jupiter.api.DisplayName;
@@ -21,9 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Transactional
-@SpringBootTest
-@AutoConfigureMockMvc
+@MockMvcTest
 class AccountControllerTest {
 
     @Autowired

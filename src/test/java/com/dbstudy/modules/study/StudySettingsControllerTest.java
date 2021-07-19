@@ -1,5 +1,8 @@
 package com.dbstudy.modules.study;
 
+import com.dbstudy.infra.MockMvcTest;
+import com.dbstudy.modules.account.AccountFactory;
+import com.dbstudy.modules.account.AccountRepository;
 import com.dbstudy.modules.account.WithAccount;
 import com.dbstudy.modules.account.Account;
 import com.dbstudy.modules.tag.Tag;
@@ -14,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,23 +25,26 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Transactional
-@SpringBootTest
-@AutoConfigureMockMvc
-@RequiredArgsConstructor
-class StudySettingsControllerTest extends StudyControllerTest{
+@MockMvcTest
+class StudySettingsControllerTest{
 
-    @Autowired private ObjectMapper objectMapper;
-    @Autowired private TagRepository tagRepository;
-    @Autowired private TagService tagService;
+    @Autowired MockMvc mockMvc;
+    @Autowired ObjectMapper objectMapper;
+    @Autowired StudyRepository studyRepository;
+    @Autowired TagRepository tagRepository;
+    @Autowired AccountRepository accountRepository;
+    @Autowired TagService tagService;
+    @Autowired StudyService studyService;
+    @Autowired AccountFactory accountFactory;
+    @Autowired StudyFactory studyFactory;
 
 
     @Test
     @WithAccount("dongbin")
     @DisplayName("스터디 소개 수정 폼 - 실패 (권한 없는 유저)")
     void updateDescriptionForm_fail() throws Exception {
-        Account account = createAccount("ehdqls");
-        Study study = createStudy("testStudy", account);
+        Account account = accountFactory.createAccount("ehdqls");
+        Study study = studyFactory.createStudy("testStudy", account);
 
         mockMvc.perform(get(getUpdateUrl(study, "description")))
                 .andExpect(status().isForbidden());
@@ -48,7 +55,7 @@ class StudySettingsControllerTest extends StudyControllerTest{
     @DisplayName("스터디 소개 수정 폼 - 성공")
     void updateDescriptionForm_success() throws Exception {
         Account account = accountRepository.findByNickname("dongbin");
-        Study study = createStudy("testStudy", account);
+        Study study = studyFactory.createStudy("testStudy", account);
 
         mockMvc.perform(get(getUpdateUrl(study, "description")))
                 .andExpect(status().isOk())
@@ -63,7 +70,7 @@ class StudySettingsControllerTest extends StudyControllerTest{
     @DisplayName("스터디 소개 수정 - 실패")
     void updateStudyDescription_fail() throws Exception {
         Account account = accountRepository.findByNickname("dongbin");
-        Study study = createStudy("testStudy", account);
+        Study study = studyFactory.createStudy("testStudy", account);
 
         mockMvc.perform(post(getUpdateUrl(study, "description"))
                 .param("shortDescription", "")
@@ -81,7 +88,7 @@ class StudySettingsControllerTest extends StudyControllerTest{
     @DisplayName("스터디 소개 수정 - 성공")
     void updateStudyDescription_success() throws Exception {
         Account account = accountRepository.findByNickname("dongbin");
-        Study study = createStudy("testStudy", account);
+        Study study = studyFactory.createStudy("testStudy", account);
 
         String short_descriptiom = "short descriptiom";
         String full_description = "full description";
@@ -102,8 +109,8 @@ class StudySettingsControllerTest extends StudyControllerTest{
     @WithAccount("dongbin")
     @DisplayName("스터디 배너 수정 폼 - 실패 (권한 없는 유저)")
     void updateBannerForm_fail() throws Exception {
-        Account account = createAccount("ehdqls");
-        Study study = createStudy("testStudy", account);
+        Account account = accountFactory.createAccount("ehdqls");
+        Study study = studyFactory.createStudy("testStudy", account);
 
         mockMvc.perform(get(getUpdateUrl(study, "banner")))
                 .andExpect(status().isForbidden());
@@ -114,7 +121,7 @@ class StudySettingsControllerTest extends StudyControllerTest{
     @DisplayName("스터디 배너 수정 폼 - 성공")
     void updateBannerForm_success() throws Exception {
         Account account = accountRepository.findByNickname("dongbin");
-        Study study = createStudy("testStudy", account);
+        Study study = studyFactory.createStudy("testStudy", account);
 
         mockMvc.perform(get(getUpdateUrl(study, "banner")))
                 .andExpect(status().isOk())
@@ -127,8 +134,8 @@ class StudySettingsControllerTest extends StudyControllerTest{
     @WithAccount("dongbin")
     @DisplayName("스터디 태그 수정 폼 - 실패 (권한 없는 유저)")
     void updateTagsForm_fail() throws Exception {
-        Account account = createAccount("ehdqls");
-        Study study = createStudy("testStudy", account);
+        Account account = accountFactory.createAccount("ehdqls");
+        Study study = studyFactory.createStudy("testStudy", account);
 
         mockMvc.perform(get(getUpdateUrl(study, "tags")))
                 .andExpect(status().isForbidden());
@@ -139,7 +146,7 @@ class StudySettingsControllerTest extends StudyControllerTest{
     @DisplayName("스터디 태그 수정 폼 - 성공")
     void updateTagsForm_success() throws Exception {
         Account account = accountRepository.findByNickname("dongbin");
-        Study study = createStudy("testStudy", account);
+        Study study = studyFactory.createStudy("testStudy", account);
 
         mockMvc.perform(get(getUpdateUrl(study, "tags")))
                 .andExpect(status().isOk())
@@ -155,7 +162,7 @@ class StudySettingsControllerTest extends StudyControllerTest{
     @DisplayName("스터디 태그 추가")
     void addTag() throws Exception {
         Account account = accountRepository.findByNickname("dongbin");
-        Study study = createStudy("testStudy", account);
+        Study study = studyFactory.createStudy("testStudy", account);
 
         TagForm tagForm = new TagForm();
         tagForm.setTagTitle("spring");
@@ -175,7 +182,7 @@ class StudySettingsControllerTest extends StudyControllerTest{
     @DisplayName("스터디 태그 삭제 실패 & 성공")
     void removeTag() throws Exception {
         Account account = accountRepository.findByNickname("dongbin");
-        Study study = createStudy("testStudy", account);
+        Study study = studyFactory.createStudy("testStudy", account);
 
         TagForm tagForm = new TagForm();
         tagForm.setTagTitle("aaa");
@@ -205,8 +212,8 @@ class StudySettingsControllerTest extends StudyControllerTest{
     @WithAccount("dongbin")
     @DisplayName("스터디 지역 수정 폼 - 실패 (권한 없는 유저)")
     void updateZonesForm_fail() throws Exception {
-        Account account = createAccount("ehdqls");
-        Study study = createStudy("testStudy", account);
+        Account account = accountFactory.createAccount("ehdqls");
+        Study study = studyFactory.createStudy("testStudy", account);
 
         mockMvc.perform(get(getUpdateUrl(study, "zones")))
                 .andExpect(status().isForbidden());
@@ -217,7 +224,7 @@ class StudySettingsControllerTest extends StudyControllerTest{
     @DisplayName("스터디 지역 수정 폼 - 성공")
     void updateZonesForm_success() throws Exception {
         Account account = accountRepository.findByNickname("dongbin");
-        Study study = createStudy("testStudy", account);
+        Study study = studyFactory.createStudy("testStudy", account);
 
         mockMvc.perform(get(getUpdateUrl(study, "zones")))
                 .andExpect(status().isOk())
@@ -232,8 +239,8 @@ class StudySettingsControllerTest extends StudyControllerTest{
     @WithAccount("dongbin")
     @DisplayName("스터디 정보 수정 폼 - 실패 (권한 없는 유저)")
     void updateStudySettingsForm_fail() throws Exception {
-        Account account = createAccount("ehdqls");
-        Study study = createStudy("testStudy", account);
+        Account account = accountFactory.createAccount("ehdqls");
+        Study study = studyFactory.createStudy("testStudy", account);
 
         mockMvc.perform(get(getUpdateUrl(study, "study")))
                 .andExpect(status().isForbidden());
@@ -244,7 +251,7 @@ class StudySettingsControllerTest extends StudyControllerTest{
     @DisplayName("스터디 정보 수정 폼 - 성공")
     void updateStudySettingsForm_success() throws Exception {
         Account account = accountRepository.findByNickname("dongbin");
-        Study study = createStudy("testStudy", account);
+        Study study = studyFactory.createStudy("testStudy", account);
 
         mockMvc.perform(get(getUpdateUrl(study, "study")))
                 .andExpect(status().isOk())

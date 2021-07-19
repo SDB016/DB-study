@@ -1,5 +1,6 @@
 package com.dbstudy.modules.main;
 
+import com.dbstudy.infra.MockMvcTest;
 import com.dbstudy.modules.account.AccountRepository;
 import com.dbstudy.modules.account.AccountService;
 import com.dbstudy.modules.account.form.SignUpForm;
@@ -20,8 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@MockMvcTest
 class MainControllerTest {
 
     @Autowired MockMvc mockMvc;

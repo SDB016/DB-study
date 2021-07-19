@@ -1,8 +1,11 @@
 package com.dbstudy.modules.study;
 
+import com.dbstudy.infra.MockMvcTest;
+import com.dbstudy.modules.account.AccountFactory;
 import com.dbstudy.modules.account.WithAccount;
 import com.dbstudy.modules.account.AccountRepository;
 import com.dbstudy.modules.account.Account;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,16 +19,15 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Transactional
-@SpringBootTest
-@AutoConfigureMockMvc
-public
+@MockMvcTest
 class StudyControllerTest {
 
-    @Autowired protected MockMvc mockMvc;
-    @Autowired protected StudyService studyService;
-    @Autowired protected StudyRepository studyRepository;
-    @Autowired protected AccountRepository accountRepository;
+    @Autowired MockMvc mockMvc;
+    @Autowired StudyService studyService;
+    @Autowired StudyRepository studyRepository;
+    @Autowired AccountRepository accountRepository;
+    @Autowired AccountFactory accountFactory;
+    @Autowired StudyFactory studyFactory;
 
     @Test
     @WithAccount("dongbin")
@@ -104,8 +106,8 @@ class StudyControllerTest {
     @WithAccount("dongbin")
     @DisplayName("스터디 가입")
     void joinStudy() throws Exception {
-        Account account = createAccount("ehdqls");
-        Study study = createStudy("testStudy",account);
+        Account account = accountFactory.createAccount("ehdqls");
+        Study study = studyFactory.createStudy("testStudy",account);
 
         mockMvc.perform(get("/study/" + study.getPath() + "/join"))
                 .andExpect(status().is3xxRedirection())
@@ -119,8 +121,8 @@ class StudyControllerTest {
     @WithAccount("dongbin")
     @DisplayName("스터디 탈퇴")
     void leaveStudy() throws Exception {
-        Account account = createAccount("ehdqls");
-        Study study = createStudy("testStudy",account);
+        Account account = accountFactory.createAccount("ehdqls");
+        Study study = studyFactory.createStudy("testStudy",account);
 
         Account dongbin = accountRepository.findByNickname("dongbin");
         studyService.addMember(study, dongbin);
@@ -130,20 +132,5 @@ class StudyControllerTest {
                 .andExpect(redirectedUrl("/study/" + study.getPath() + "/members"));
 
         assertFalse(study.getMembers().contains(dongbin));
-    }
-
-    protected Study createStudy(String path, Account account) {
-        Study study = new Study();
-        study.setPath(path);
-        studyService.createNewStudy(study, account);
-        return study;
-    }
-
-    protected Account createAccount(String nickname) {
-        Account account = new Account();
-        account.setNickname(nickname);
-        account.setEmail(nickname+"@email.com");
-        accountRepository.save(account);
-        return account;
     }
 }
