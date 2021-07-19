@@ -1,5 +1,6 @@
 package com.dbstudy.modules.study;
 
+import com.dbstudy.infra.AbstractContainerBaseTest;
 import com.dbstudy.infra.MockMvcTest;
 import com.dbstudy.modules.account.AccountFactory;
 import com.dbstudy.modules.account.WithAccount;
@@ -20,7 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @MockMvcTest
-class StudyControllerTest {
+class StudyControllerTest extends AbstractContainerBaseTest {
 
     @Autowired MockMvc mockMvc;
     @Autowired StudyService studyService;

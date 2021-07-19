@@ -1,5 +1,6 @@
 package com.dbstudy.modules.account;
 
+import com.dbstudy.infra.AbstractContainerBaseTest;
 import com.dbstudy.infra.MockMvcTest;
 import com.dbstudy.modules.tag.Tag;
 import com.dbstudy.modules.zone.Zone;
@@ -28,7 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @MockMvcTest
-class SettingsControllerTest {
+class SettingsControllerTest extends AbstractContainerBaseTest {
 
     @Autowired MockMvc mockMvc;
     @Autowired AccountRepository accountRepository;
