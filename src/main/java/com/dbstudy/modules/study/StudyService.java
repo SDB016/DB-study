@@ -1,11 +1,13 @@
 package com.dbstudy.modules.study;
 
 import com.dbstudy.modules.account.Account;
+import com.dbstudy.modules.study.event.StudyCreatedEvent;
 import com.dbstudy.modules.tag.Tag;
 import com.dbstudy.modules.zone.Zone;
 import com.dbstudy.modules.study.form.StudyDescriptionForm;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,10 +24,12 @@ public class StudyService {
 
     private final StudyRepository studyRepository;
     private final ModelMapper modelMapper;
+    private final ApplicationEventPublisher publisher;
 
     public Study createNewStudy(Study study, Account account) {
         Study newStudy = studyRepository.save(study);
         newStudy.addManager(account);
+        publisher.publishEvent(new StudyCreatedEvent(newStudy));
         return newStudy;
     }
 
