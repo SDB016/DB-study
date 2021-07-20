@@ -22,7 +22,7 @@ public class Notification {
 
     private String message;
 
-    private boolean check;
+    private boolean checked;
 
     @ManyToOne
     private Account account;
