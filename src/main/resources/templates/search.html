@@ -93,5 +93,28 @@
         </div>
     </div>
     <script th:replace="fragment.html :: date-time"></script>
+    <script src="/node_modules/mark.js/dist/jquery.mark.min.js"></script>
+    <script type="application/javascript">
+        $(function () {
+            var mark = function(){
+                var keyword = $("#keyword").text();
+
+                var options = {
+                    "each": function (element) {
+                        setTimeout(function () {
+                            $(element).addClass("animate");
+                        }, 150);
+                    }
+                };
+
+                $(".context").unmark({
+                    done: function () {
+                        $(".context").mark(keyword, options);
+                    }
+                });
+            };
+            mark();
+        });
+    </script>
 </body>
 </html>
