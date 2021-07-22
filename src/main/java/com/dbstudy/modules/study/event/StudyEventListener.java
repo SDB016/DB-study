@@ -18,7 +18,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;;import java.time.LocalDateTime;
+import org.thymeleaf.context.Context;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
