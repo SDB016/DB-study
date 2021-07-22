@@ -2,6 +2,7 @@ package com.dbstudy.modules.study;
 
 import com.dbstudy.modules.account.Account;
 import com.dbstudy.modules.study.event.StudyCreatedEvent;
+import com.dbstudy.modules.study.event.StudyUpdateEvent;
 import com.dbstudy.modules.tag.Tag;
 import com.dbstudy.modules.zone.Zone;
 import com.dbstudy.modules.study.form.StudyDescriptionForm;
@@ -74,6 +75,7 @@ public class StudyService {
 
     public void updateStudyDescription(Study study, StudyDescriptionForm form) {
         modelMapper.map(form, study);
+        publisher.publishEvent(new StudyUpdateEvent(study,"스터디 소개를 수정했습니다."));
     }
 
     public void updateStudyImage(Study study, String image) {
@@ -128,14 +130,18 @@ public class StudyService {
 
     public void close(Study study) {
         study.close();
+        publisher.publishEvent(new StudyUpdateEvent(study, "스터디를 종료했습니다."));
     }
 
     public void startRecruiting(Study study) {
         study.startRecruiting();
+        publisher.publishEvent(new StudyUpdateEvent(study, "팀원 모집을 시작합니다."));
     }
 
     public void stopRecruiting(Study study) {
         study.stopRecruiting();
+        publisher.publishEvent(new StudyUpdateEvent(study, "팀원 모집을 중단했습니다."));
+
     }
 
     public boolean isValidPath(String newPath) {
