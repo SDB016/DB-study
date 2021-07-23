@@ -4,13 +4,21 @@
 
 <body class="bg-light">
     <div th:replace="fragment.html::main-nav"></div>
-    <div class="alert alert-warning" role="alert" th:if="${account != null && !account.emailVerified}">
-        가입을 완료하시려면 <a href="#" th:href="@{/check-email}" class="alert-link">계정 인증 이메일을 확인</a>하세요.
-    </div>
-    <div class="container">
-        <div class="py-5 text-center">
-            <h2>DBS 스터디</h2>
+    <section class="jumbotron text-center" th:if="${account == null}">
+        <div class="container">
+            <h1>DB 스터디</h1>
+            <p class="lead text-muted">
+                태그와 지역 기반으로 스터디를 찾고 참여하세요.<br/>
+                스터디 모임 관리 기능을 제공합니다.
+            </p>
+            <p>
+                <a class="btn btn-primary my-2" th:href="@{/sign-up}">회원 가입</a>
+            </p>
         </div>
+    </section>
+    <div class="row justify-content-center pt-3">
+        <div th:replace="fragment.html :: study-list (studyList=${studyList})"></div>
     </div>
+    <div th:replace="fragment.html :: date-time"></div>
 </body>
 </html>
