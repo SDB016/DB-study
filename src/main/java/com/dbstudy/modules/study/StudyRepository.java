@@ -1,10 +1,14 @@
 package com.dbstudy.modules.study;
 
+import com.dbstudy.modules.account.Account;
+import com.dbstudy.modules.tag.Tag;
+import com.dbstudy.modules.zone.Zone;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 @Transactional(readOnly = true)
 public interface StudyRepository extends JpaRepository<Study, Long>, StudyRepositoryExtension {
@@ -34,5 +38,10 @@ public interface StudyRepository extends JpaRepository<Study, Long>, StudyReposi
 
     Study findStudyOnlyByPath(String path);
 
+    @EntityGraph(attributePaths = {"tags","zones"})
     List<Study> findFirst9ByPublishedAndClosedOrderByPublishedDateTimeDesc(boolean published, boolean closed);
+
+    List<Study> findFirst6ByManagersContainingAndClosedOrderByPublishedDateTimeDesc(Account account, boolean closed);
+
+    List<Study> findFirst6ByMembersContainingAndClosedOrderByPublishedDateTimeDesc(Account account, boolean closed);
 }

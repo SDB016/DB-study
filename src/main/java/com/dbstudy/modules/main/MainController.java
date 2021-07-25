@@ -1,7 +1,9 @@
 package com.dbstudy.modules.main;
 
+import com.dbstudy.modules.account.AccountRepository;
 import com.dbstudy.modules.account.CurrentAccount;
 import com.dbstudy.modules.account.Account;
+import com.dbstudy.modules.event.EnrollmentRepository;
 import com.dbstudy.modules.study.Study;
 import com.dbstudy.modules.study.StudyRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.validation.constraints.AssertFalse;
 import java.util.List;
 
 @Controller
@@ -20,11 +23,19 @@ import java.util.List;
 public class MainController {
 
     private final StudyRepository studyRepository;
+    private final AccountRepository accountRepository;
+    private final EnrollmentRepository enrollmentRepository;
 
     @GetMapping("/")
     public String home(@CurrentAccount Account account, Model model) {
         if (account != null) {
-            model.addAttribute(account);
+            Account accountLoaded = accountRepository.findAccountWithTagsAndZonesById(account.getId());
+            model.addAttribute(accountLoaded);
+            model.addAttribute("enrollmentList", enrollmentRepository.findByAccountAndAcceptedOrderByEnrolledAtDesc(accountLoaded, true));
+            model.addAttribute("studyList", studyRepository.findByAccount(accountLoaded.getZones(), accountLoaded.getTags()));
+            model.addAttribute("studyManagerOf", studyRepository.findFirst6ByManagersContainingAndClosedOrderByPublishedDateTimeDesc(account, false));
+            model.addAttribute("studyMemberOf", studyRepository.findFirst6ByMembersContainingAndClosedOrderByPublishedDateTimeDesc(account, false));
+            return "index-after-login";
         }
         model.addAttribute("studyList",studyRepository.findFirst9ByPublishedAndClosedOrderByPublishedDateTimeDesc(true, false));
         return "index";

@@ -48,7 +48,8 @@ class StudySettingsControllerTest extends AbstractContainerBaseTest {
         Study study = studyFactory.createStudy("testStudy", account);
 
         mockMvc.perform(get(getUpdateUrl(study, "description")))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"));
     }
 
     @Test
@@ -114,7 +115,8 @@ class StudySettingsControllerTest extends AbstractContainerBaseTest {
         Study study = studyFactory.createStudy("testStudy", account);
 
         mockMvc.perform(get(getUpdateUrl(study, "banner")))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"));
     }
 
     @Test
@@ -139,7 +141,8 @@ class StudySettingsControllerTest extends AbstractContainerBaseTest {
         Study study = studyFactory.createStudy("testStudy", account);
 
         mockMvc.perform(get(getUpdateUrl(study, "tags")))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"));
     }
 
     @Test
@@ -217,7 +220,8 @@ class StudySettingsControllerTest extends AbstractContainerBaseTest {
         Study study = studyFactory.createStudy("testStudy", account);
 
         mockMvc.perform(get(getUpdateUrl(study, "zones")))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"));
     }
 
     @Test
@@ -244,7 +248,8 @@ class StudySettingsControllerTest extends AbstractContainerBaseTest {
         Study study = studyFactory.createStudy("testStudy", account);
 
         mockMvc.perform(get(getUpdateUrl(study, "study")))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"));
     }
 
     @Test
