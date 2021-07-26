@@ -31,6 +31,15 @@ mvnw clean compile package
 java -jar target/*.jar
 ```
 
+# DB 설정
+PostgreSQL 설치 후, psql로 접속해서 아래 명령어 사용하여 DB와 USER 생성하고 권한 설정.
+
+```sql
+CREATE DATABASE testdb;
+CREATE USER testuser WITH ENCRYPTED PASSWORD 'testpass';
+GRANT ALL PRIVILEGES ON DATABASE testdb TO testuser;
+```
+
 이 프로젝트는 인프런에 있는 백기선 님의 강의를 수강하며 작성한 프로젝트입니다.
 코드에 대한 모든 저작권은 백기선 님께 있음을 명시합니다.
 
